@@ -1,8 +1,7 @@
-name             'chef-qmail'
-maintainer       'DSI'
+name 'chef-qmail'
+maintainer 'DSI'
 maintainer_email 'stephane.lii@informatique.gov.pf'
-license          'All rights reserved'
-description      'Installs/Configures chef-qmail'
+license 'All rights reserved'
+description 'Installs/Configures chef-qmail'
 long_description 'Installs/Configures chef-qmail'
-version          '0.1.0'
-
+version '0.1.0'
