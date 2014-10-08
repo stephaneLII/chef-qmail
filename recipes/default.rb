@@ -6,83 +6,29 @@
 #
 # All rights reserved - Do Not Redistribute
 #
-src_package = '/usr/local/src'
-qmail_home = '/var/qmail'
-qmail_log = '/var/log/qmail'
-qmail_service = '/service'
-qmail_bals = '/data/mail'
-ldapuid = '1007'
-ldapgid = '104'
+
+qmail_home = node['qmail']['qmail_home']
+qmail_log = node['qmail']['qmail_log']
+qmail_service = node['qmail']['qmail_service']
 
 ##################################
 # Paquets necessaires
 ##################################
 
-package 'gcc' do
-  action :install
-end
-
-# package tar
-package 'tar' do
-  action :install
-end
-
-# package csh
-package 'csh' do
-  action :install
-end
-
-# package ucspi-tcp
-package 'ucspi-tcp' do
-  action :install
-end
-
-# package daemontools
-package 'daemontools' do
-  action :install
-end
-
-# package daemontools-run
-package 'daemontools-run' do
-  action :install
-end
-
-# package libldap2-dev
-package 'libldap2-dev' do
-  action :install
-end
-
-# package libssl-dev
-package 'libssl-dev' do
-  action :install
-end
-
-# package git-core
-package 'git-core' do
-  action :install
+%w( gcc tar csh ucspi-tcp daemontools daemontools-run libldap2-dev libssl-dev git-core ).each do |pkg|
+  package pkg do
+    action :install
+  end
 end
 
 ###############################
 # Courier-imap dependencies
 ###############################
-# package libtool
-package 'libtool' do
-  action :install
-end
 
-# package expect
-package 'expect' do
-  action :install
-end
-
-# package libgdbm-dev
-package 'libgdbm-dev' do
-  action :install
-end
-
-# package g++
-package 'g++' do
-  action :install
+%w( libtool expect libgdbm-dev g++ ).each do |pkg|
+  package pkg do
+    action :install
+  end
 end
 
 ##################################
@@ -94,7 +40,7 @@ group 'nofiles' do
 end
 
 group 'vgroup' do
-  gid "#{ldapgid}"
+  gid node['qmail']['ldapgid']
   action :create
   non_unique true
 end
@@ -105,7 +51,7 @@ end
 
 user 'vuser' do
   gid 'vgroup'
-  uid "#{ldapuid}"
+  uid node['qmail']['ldapuid']
   home '/home/vuser'
   action :create
 end
@@ -156,21 +102,14 @@ end
 # Creation des repertoires de base
 ##################################
 
-# directory '#{daemontools_path}' do
-# owner 'root'
-#	group 'root'
-#	mode '0755'
-#	action :create
-# end
-
-directory "#{src_package}" do
+directory node['qmail']['src_packager'] do
   owner 'root'
   group 'root'
   mode '0755'
   action :create
 end
 
-directory "#{qmail_log}" do
+directory node['qmail']['qmail_log'] do
   owner 'qmaill'
   group 'root'
   mode '0755'
@@ -184,7 +123,7 @@ directory "#{qmail_log}/smtpd" do
   action :create
 end
 
-directory "#{qmail_home}" do
+directory node['qmail']['qmail_home'] do
   owner 'root'
   group 'root'
   mode '0755'
@@ -198,7 +137,7 @@ directory '/data' do
   action :create
 end
 
-directory "#{qmail_bals}" do
+directory node['qmail']['qmail_bals'] do
   owner 'vuser'
   group 'vgroup'
   mode '0700'
@@ -211,7 +150,7 @@ end
 
 bash 'download-compilation-qmail-src-ldap' do
   user 'root'
-  cwd "#{src_package}"
+  cwd node['qmail']['src_packager']
   code <<-EOH
   git clone  https://github.com/stephaneLII/qmail-src-ldap.git
   cd qmail-src-ldap
@@ -225,7 +164,7 @@ end
 ##################################
 bash 'download-courier-authlib' do
   user 'root'
-  cwd "#{src_package}"
+  cwd node['qmail']['src_packager']
   code <<-EOH
   wget http://softlayer-dal.dl.sourceforge.net/project/courier/authlib/0.66.1/courier-authlib-0.66.1.tar.bz2
   bunzip2 courier-authlib-0.66.1.tar.bz2
@@ -239,7 +178,7 @@ end
 ##################################
 bash 'download-courier-imap' do
   user 'root'
-  cwd "#{src_package}"
+  cwd node['qmail']['src_packager']
   code <<-EOH
   wget http://tcpdiag.dl.sourceforge.net/project/courier/imap/4.15.1/courier-imap-4.15.1.tar.bz2
   bunzip2 courier-imap-4.15.1.tar.bz2
@@ -258,7 +197,7 @@ cookbook_file 'qmailctl' do
 end
 
 link '/usr/bin/qmailctl' do
-  to '#{qmail_home}/bin/qmailctl'
+  to "#{qmail_home}/bin/qmailctl"
 end
 
 ###############################################
@@ -272,7 +211,7 @@ cookbook_file 'defaultdelivery' do
 end
 
 cookbook_file 'concurrencyincoming' do
-  path '#{qmail_home}/control/concurrencyincoming'
+  path "#{qmail_home}/control/concurrencyincoming"
   action :create
   mode '0644'
 end
@@ -422,7 +361,7 @@ end
 # Mise en place des liens symboliques
 ###############################################
 
-link "#{qmail_service}" do
+link node['qmail']['qmail_service'] do
   to '/etc/service'
 end
 
@@ -431,7 +370,7 @@ link "#{qmail_service}/qmail" do
 end
 
 link "#{qmail_service}/qmail-smtpd" do
-  to '#{qmail_home}/boot/qmail-smtpd'
+  to "#{qmail_home}/boot/qmail-smtpd"
 end
 
 link "#{qmail_service}/qmail-imapd" do
