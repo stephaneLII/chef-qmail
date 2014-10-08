@@ -1,0 +1,3 @@
+127.:allow,RELAYCLIENT="",NOPBS=""
+10.:allow,RELAYCLIENT="",NOPBS=""
+:allow
