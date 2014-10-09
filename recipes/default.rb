@@ -25,10 +25,28 @@ end
 # Courier-imap dependencies
 ###############################
 
-%w( libtool expect libgdbm-dev g++ ).each do |pkg|
+%w( courier-authdaemon courier-authlib courier-authlib-ldap courier-ldap courier-imap ).each do |pkg|
   package pkg do
     action :install
   end
+end
+
+service "postfix" do
+  supports :status => true, :restart => true, :stop => true, :reload => true
+  action [ :disable, :stop ]
+end
+
+template "/etc/courier/authldaprc" do
+  source "authldaprc.erb"
+  owner "daemon"
+  group "daemon"
+  mode "0660"
+end
+
+cookbook_file 'authdaemonrc' do
+  path "/etc/courier/authdaemonrc"
+  action :create
+  mode '0660'
 end
 
 ##################################
@@ -162,30 +180,30 @@ end
 ##################################
 # Download et compilation de courier-authlib
 ##################################
-bash 'download-courier-authlib' do
-  user 'root'
-  cwd node['qmail']['src_packager']
-  code <<-EOH
-  wget http://softlayer-dal.dl.sourceforge.net/project/courier/authlib/0.66.1/courier-authlib-0.66.1.tar.bz2
-  bunzip2 courier-authlib-0.66.1.tar.bz2
-  tar xvf courier-authlib-0.66.1.tar
-  cd courier-authlib-0.66.1
-  EOH
-end
+# bash 'download-courier-authlib' do
+#  user 'root'
+#  cwd node['qmail']['src_packager']
+#  code <<-EOH
+#  wget http://softlayer-dal.dl.sourceforge.net/project/courier/authlib/0.66.1/courier-authlib-0.66.1.tar.bz2
+#  bunzip2 courier-authlib-0.66.1.tar.bz2
+#  tar xvf courier-authlib-0.66.1.tar
+#  cd courier-authlib-0.66.1
+#  EOH
+# end
 
 ##################################
 # Download et compilation de courier-imap
 ##################################
-bash 'download-courier-imap' do
-  user 'root'
-  cwd node['qmail']['src_packager']
-  code <<-EOH
-  wget http://tcpdiag.dl.sourceforge.net/project/courier/imap/4.15.1/courier-imap-4.15.1.tar.bz2
-  bunzip2 courier-imap-4.15.1.tar.bz2
-  tar xvf courier-imap-4.15.1.tar
-  cd courier-imap-4.15.1
-  EOH
-end
+# bash 'download-courier-imap' do
+#  user 'root'
+#  cwd node['qmail']['src_packager']
+#  code <<-EOH
+#  wget http://tcpdiag.dl.sourceforge.net/project/courier/imap/4.15.1/courier-imap-4.15.1.tar.bz2
+#  bunzip2 courier-imap-4.15.1.tar.bz2
+#  tar xvf courier-imap-4.15.1.tar
+#  cd courier-imap-4.15.1
+#  EOH
+# end
 
 ##################################
 # Creation de scripts controles
@@ -249,20 +267,51 @@ end
 ###############################################
 # Parametrage acces LDAP
 ###############################################
-cookbook_file 'ldapbasedn' do
-  path "#{qmail_home}/control/ldapbasedn"
-  action :create
+
+template "#{qmail_home}/control/ldapserver" do
+  source 'ldapserver.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldappassword' do
-  path "#{qmail_home}/control/ldappassword"
-  action :create
+template "#{qmail_home}/control/ldapbasedn" do
+  source 'ldapbasedn.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldapgrouppassword' do
-  path "#{qmail_home}/control/ldapgrouppassword"
+template "#{qmail_home}/control/ldaplogin" do
+  source 'ldaplogin.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/control/ldapgrouplogin" do
+  source 'ldapgrouplogin.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/control/ldappassword" do
+  source 'ldappassword.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/control/ldapgrouppassword" do
+  source 'ldapgrouppassword.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+cookbook_file 'ldapuid' do
+  path "#{qmail_home}/control/ldapuid"
   action :create
   mode '0644'
 end
@@ -273,26 +322,8 @@ cookbook_file 'ldapgid' do
   mode '0644'
 end
 
-cookbook_file 'ldapuid' do
-  path "#{qmail_home}/control/ldapuid"
-  action :create
-  mode '0644'
-end
-
-cookbook_file 'ldapgrouplogin' do
-  path "#{qmail_home}/control/ldapgrouplogin"
-  action :create
-  mode '0644'
-end
-
 cookbook_file 'ldaplocaldelivery' do
   path "#{qmail_home}/control/ldaplocaldelivery"
-  action :create
-  mode '0644'
-end
-
-cookbook_file 'ldaplogin' do
-  path "#{qmail_home}/control/ldaplogin"
   action :create
   mode '0644'
 end
@@ -309,11 +340,7 @@ cookbook_file 'ldaprebind' do
   mode '0644'
 end
 
-cookbook_file 'ldapserver' do
-  path "#{qmail_home}/control/ldapserver"
-  action :create
-  mode '0644'
-end
+
 
 cookbook_file 'dirmaker' do
   path "#{qmail_home}/control/dirmaker"
@@ -343,19 +370,19 @@ cookbook_file 'qmail-imap-run' do
   group 'qmail'
 end
 
-cookbook_file 'imapd' do
-  path "#{qmail_home}/bin/imapd"
-  action :create
-  mode '0755'
-  group 'qmail'
-end
+# cookbook_file 'imapd' do
+#  path "#{qmail_home}/bin/imapd"
+#  action :create
+#  mode '0755'
+#  group 'qmail'
+# end
 
-cookbook_file 'imaplogin' do
-  path "#{qmail_home}/bin/imaplogin"
-  action :create
-  mode '0755'
-  group 'qmail'
-end
+# cookbook_file 'imaplogin' do
+#  path "#{qmail_home}/bin/imaplogin"
+#  action :create
+#  mode '0755'
+#  group 'qmail'
+# end
 
 ###############################################
 # Mise en place des liens symboliques
@@ -373,9 +400,9 @@ link "#{qmail_service}/qmail-smtpd" do
   to "#{qmail_home}/boot/qmail-smtpd"
 end
 
-link "#{qmail_service}/qmail-imapd" do
-  to "#{qmail_home}/boot/qmail-imapd"
-end
+# link "#{qmail_service}/qmail-imapd" do
+#  to "#{qmail_home}/boot/qmail-imapd"
+# end
 
 link "#{qmail_service}/qmail-pop3d" do
   to "#{qmail_home}/boot/qmail-pop3d"
