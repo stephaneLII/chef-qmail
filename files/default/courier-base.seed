@@ -1,0 +1,3 @@
+courier-base	courier-base/webadmin-configmode	boolean	false
+courier-base	courier-base/maildir	string	Maildir
+courier-base	courier-base/maildirpath	note
