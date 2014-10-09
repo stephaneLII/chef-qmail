@@ -10,6 +10,7 @@
 qmail_home = node['qmail']['qmail_home']
 qmail_log = node['qmail']['qmail_log']
 qmail_service = node['qmail']['qmail_service']
+courier_etc = node['qmail']['courier_etc']
 
 ##################################
 # Paquets necessaires
