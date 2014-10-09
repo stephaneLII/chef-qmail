@@ -10,6 +10,7 @@
 qmail_home = node['qmail']['qmail_home']
 qmail_log = node['qmail']['qmail_log']
 qmail_service = node['qmail']['qmail_service']
+courier_etc = node['qmail']['courier_etc']
 
 ##################################
 # Paquets necessaires
@@ -22,14 +23,14 @@ qmail_service = node['qmail']['qmail_service']
 end
 
 cookbook_file 'courier-base.seed' do
-  path "/tmp/courier-base.seed"
+  path '/tmp/courier-base.seed'
   action :create
   mode '0400'
   owner 'root'
 end
 
 cookbook_file 'postfix.seed' do
-  path "/tmp/postfix.seed"
+  path '/tmp/postfix.seed'
   action :create
   mode '0400'
   owner 'root'
@@ -54,46 +55,46 @@ end
   end
 end
 
-service "postfix" do
-  supports :status => true, :restart => true, :stop => true, :reload => true
-  action [ :disable, :stop ]
+service 'postfix' do
+  supports status: true, restart: true, stop: true, reload: true
+  action [:disable, :stop]
 end
 
-template "/etc/courier/authldaprc" do
-  source "authldaprc.erb"
-  owner "daemon"
-  group "daemon"
-  mode "0660"
-  notifies :reload, "service[courier-ldap]", :immediately
+template '/etc/courier/authldaprc' do
+  source 'authldaprc.erb'
+  owner 'daemon'
+  group 'daemon'
+  mode '0660'
+  notifies :reload, 'service[courier-ldap]', :immediately
 end
 
 template 'authdaemonrc' do
-  path "#{courier_etc}/authdaemonrc"
+  path '#{courier_etc}/authdaemonrc'
   source 'authdaemonrc.erb'
   mode '0660'
-  notifies :reload, "service[courier-authdaemon]", :immediately
+  notifies :reload, 'service[courier-authdaemon]', :immediately
 end
 
 template 'imapd' do
   path "#{courier_etc}/imapd"
   source 'imapd.erb'
   mode '0660'
-  notifies :reload, "service[courier-imap]", :immediately
+  notifies :reload, 'service[courier-imap]', :immediately
 end
 
 service 'courier-ldap' do
- supports :restart => true, :reload => true
- action [:restart , :reload]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
 service 'courier-authdaemon' do
- supports :restart => true, :reload => true
- action [:restart , :reload]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
 service 'courier-imap' do
- supports :restart => true, :reload => true
- action [:restart , :reload]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
 ##################################
@@ -386,8 +387,6 @@ cookbook_file 'ldaprebind' do
   action :create
   mode '0644'
 end
-
-
 
 cookbook_file 'dirmaker' do
   path "#{qmail_home}/control/dirmaker"
