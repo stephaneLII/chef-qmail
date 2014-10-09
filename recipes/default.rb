@@ -15,10 +15,33 @@ qmail_service = node['qmail']['qmail_service']
 # Paquets necessaires
 ##################################
 
-%w( gcc tar csh ucspi-tcp daemontools daemontools-run libldap2-dev libssl-dev git-core ).each do |pkg|
+%w( debconf-utils gcc tar csh ucspi-tcp daemontools daemontools-run libldap2-dev libssl-dev git-core ).each do |pkg|
   package pkg do
     action :install
   end
+end
+
+cookbook_file 'courier-base.seed' do
+  path "/tmp/courier-base.seed"
+  action :create
+  mode '0400'
+  owner 'root'
+end
+
+cookbook_file 'postfix.seed' do
+  path "/tmp/postfix.seed"
+  action :create
+  mode '0400'
+  owner 'root'
+end
+
+bash 'setting-courier-base-options' do
+  user 'root'
+  cwd '/tmp'
+  code <<-EOH
+   cat /tmp/courier-base.seed | debconf-set-selections
+   cat /tmp/postfix.seed | debconf-set-selections
+  EOH
 end
 
 ###############################
@@ -41,12 +64,36 @@ template "/etc/courier/authldaprc" do
   owner "daemon"
   group "daemon"
   mode "0660"
+  notifies :reload, "service[courier-ldap]", :immediately
 end
 
-cookbook_file 'authdaemonrc' do
-  path "/etc/courier/authdaemonrc"
-  action :create
+template 'authdaemonrc' do
+  path "#{courier_etc}/authdaemonrc"
+  source 'authdaemonrc.erb'
   mode '0660'
+  notifies :reload, "service[courier-authdaemon]", :immediately
+end
+
+template 'imapd' do
+  path "#{courier_etc}/imapd"
+  source 'imapd.erb'
+  mode '0660'
+  notifies :reload, "service[courier-imap]", :immediately
+end
+
+service 'courier-ldap' do
+ supports :restart => true, :reload => true
+ action [:restart , :reload]
+end
+
+service 'courier-authdaemon' do
+ supports :restart => true, :reload => true
+ action [:restart , :reload]
+end
+
+service 'courier-imap' do
+ supports :restart => true, :reload => true
+ action [:restart , :reload]
 end
 
 ##################################
