@@ -55,9 +55,14 @@ end
   end
 end
 
-service 'postfix' do
-  supports status: true, restart: true, stop: true, reload: true
-  action [:disable, :stop]
+case node['platform']
+when 'ubuntu'
+  if node['platform_version'].to_f >= 14.04
+    service 'postfix' do
+      supports status: true, restart: true, stop: true, reload: true
+      action [:disable, :stop]
+    end
+  end
 end
 
 template '/etc/courier/authldaprc' do
@@ -69,7 +74,7 @@ template '/etc/courier/authldaprc' do
 end
 
 template 'authdaemonrc' do
-  path '#{courier_etc}/authdaemonrc'
+  path "#{courier_etc}/authdaemonrc"
   source 'authdaemonrc.erb'
   mode '0660'
   notifies :reload, 'service[courier-authdaemon]', :immediately
@@ -490,10 +495,17 @@ link '/usr/local/bin/tai64nlocal' do
   to '/usr/bin/tai64nlocal'
 end
 
-bash 'Qmail-restArt' do
+case node['platform']
+when 'ubuntu'
+  start_command = 'initctl  stop svscan ; initctl   start svscan'
+when 'debian'
+  start_command = 'kill -HUP 1'
+end
+
+bash 'qmail-restart' do
   user 'root'
   cwd "#{qmail_home}/bin"
   code <<-EOH
-  initctl  stop svscan ; initctl   start svscan
+    #{start_command}
   EOH
 end
