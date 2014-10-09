@@ -1,0 +1,20 @@
+LDAP_URI    ldap://<%= node['qmail']['ldapserver'] %>
+LDAP_PROTOCOL_VERSION 3
+LDAP_BASEDN   <%= node['qmail']['ldapbasedn'] %>
+LDAP_BINDDN   <%= node['qmail']['ldaplogin'] %>
+LDAP_BINDPW   <%= node['qmail']['ldappassword'] %>
+LDAP_TIMEOUT    5
+LDAP_AUTHBIND   1
+LDAP_MAIL   uid
+LDAP_FILTER   (objectClass=qmailUser)
+LDAP_GLOB_UID   vuser
+LDAP_GLOB_GID   vgroup
+LDAP_HOMEDIR    mailMessageStore
+LDAP_MAILROOT   /
+LDAP_MAILDIR    mailMessageStore
+LDAP_DEFAULTDELIVERY  defaultDelivery
+LDAP_FULLNAME   cn
+LDAP_CLEARPW    clearPassword
+LDAP_CRYPTPW    userPassword
+LDAP_DEREF    never
+LDAP_TLS    0
