@@ -77,6 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision :chef_solo do |chef|
     chef.json = {
       qmail: {
+<<<<<<< HEAD
         ldapserver: 'ldap.srv.gov.pf',
         ldapbasedn: 'dc=pf',
         ldappassword: 'lpcvpdt',
@@ -84,6 +85,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         imapd_install: true,
         imapd_enable: false ,
         pop3d: false
+=======
+        ldapserver: 'YOUR_SERVER',
+        ldapbasedn: 'YOUR_BASE_DN',
+        ldappassword: 'YOUR_PASSOWRD',
+        ldapgrouppassword: 'YOUR_PASSWORD'
+>>>>>>> cd193156e79562e352dae4bda95609ce7d348096
       }
     }
 

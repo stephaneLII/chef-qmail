@@ -27,6 +27,71 @@ if node['qmail']['imapd_install'] then
    include_recipe "chef-qmail::courier-imapd"
 end
 
+bash 'setting-courier-base-options' do
+  user 'root'
+  cwd '/tmp'
+  code <<-EOH
+   cat /tmp/courier-base.seed | debconf-set-selections
+   cat /tmp/postfix.seed | debconf-set-selections
+  EOH
+end
+
+###############################
+# Courier-imap dependencies
+###############################
+
+%w( courier-authdaemon courier-authlib courier-authlib-ldap courier-ldap courier-imap ).each do |pkg|
+  package pkg do
+    action :install
+  end
+end
+
+case node['platform']
+when 'ubuntu'
+  if node['platform_version'].to_f >= 14.04
+    service 'postfix' do
+      supports status: true, restart: true, stop: true, reload: true
+      action [:disable, :stop]
+    end
+  end
+end
+
+template '/etc/courier/authldaprc' do
+  source 'authldaprc.erb'
+  owner 'daemon'
+  group 'daemon'
+  mode '0660'
+  notifies :reload, 'service[courier-ldap]', :immediately
+end
+
+template 'authdaemonrc' do
+  path "#{courier_etc}/authdaemonrc"
+  source 'authdaemonrc.erb'
+  mode '0660'
+  notifies :reload, 'service[courier-authdaemon]', :immediately
+end
+
+template 'imapd' do
+  path "#{courier_etc}/imapd"
+  source 'imapd.erb'
+  mode '0660'
+  notifies :reload, 'service[courier-imap]', :immediately
+end
+
+service 'courier-ldap' do
+  supports restart: true, reload: true
+  action [:restart, :reload]
+end
+
+service 'courier-authdaemon' do
+  supports restart: true, reload: true
+  action [:restart, :reload]
+end
+
+service 'courier-imap' do
+  supports restart: true, reload: true
+  action [:restart, :reload]
+end
 
 ##################################
 # Creation des users and groups
@@ -386,9 +451,17 @@ end
 # Redémarrage du service Qmail selon ubuntu 14.04
 ###############################################
 bash 'Qmail-restArt' do
+case node['platform']
+when 'ubuntu'
+  start_command = 'initctl  stop svscan ; initctl   start svscan'
+when 'debian'
+  start_command = 'kill -HUP 1'
+end
+
+bash 'qmail-restart' do
   user 'root'
   cwd "#{qmail_home}/bin"
   code <<-EOH
-  initctl  stop svscan ; initctl   start svscan
+    #{start_command}
   EOH
 end
