@@ -14,3 +14,7 @@ default['qmail']['ldaplogin'] = "cn=manager,#{node['qmail']['ldapbasedn']}"
 default['qmail']['ldapgrouplogin'] = "cn=manager,#{node['qmail']['ldapbasedn']}"
 default['qmail']['ldappassword'] = 'password'
 default['qmail']['ldapgrouppassword'] = 'password'
+
+default['qmail']['imapd_install'] = true
+default['qmail']['imapd_enable'] = false
+default['qmail']['pop3d'] = false
