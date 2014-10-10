@@ -7,10 +7,10 @@
 # All rights reserved - Do Not Redistribute
 #
 
-courier_etc = node['qmail']['courier_etc']
- puts "   \033[31mINSTALLING IMAP\033[0m\n"
+#courier_etc = node['qmail']['courier_etc']
+puts "   \033[31mINSTALLING IMAP\033[0m\n"
 ##################################
-# Paquets necessaires
+# Paquets necessaires pour debconf
 ##################################
 
 %w( debconf-utils ).each do |pkg|
@@ -52,9 +52,14 @@ end
   end
 end
 
-service 'postfix' do
-  supports status: true, restart: true, stop: true, reload: true
-  action [:disable, :stop]
+case node['platform']
+when 'ubuntu'
+  if node['platform_version'].to_f >= 14.04
+    service 'postfix' do
+      supports status: true, restart: true, stop: true, reload: true
+      action [:disable, :stop]
+    end
+  end
 end
 
 template '/etc/courier/authldaprc' do
@@ -80,23 +85,22 @@ template 'imapd' do
 end
 
 service 'courier-ldap' do
-  supports restart: true, reload: true , stop: true
-  action [:nothing]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
 service 'courier-authdaemon' do
-  supports restart: true, reload: true, stop: true
-  action [:nothing]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
 service 'courier-imap' do
-  supports restart: true, reload: true, stop: true
-  action [:nothing]
+  supports restart: true, reload: true
+  action [:restart, :reload]
 end
 
-if ! node['qmail']['imapd_enable'] then
-  
-  puts "   \033[31mDISABLING\033[0m\n"
+if ! node['qmail']['imapd_enable'] then 
+#  puts "   \033[31mDISABLING\033[0m\n"
   bash 'Courier-stop' do
     user 'root'
     code <<-EOH
@@ -105,10 +109,8 @@ if ! node['qmail']['imapd_enable'] then
   end
 end
 
-#; service courier-authdaemon stop ; service courier-imap stop
 if node['qmail']['imapd_enable'] then
-  
-  puts "   \033[31mDISABLING\033[0m\n"
+#  puts "   \033[31mENABLING\033[0m\n"
   bash 'Courier-start' do
     user 'root'
     code <<-EOH
