@@ -76,10 +76,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
-      mysql: {
-        server_root_password: 'rootpass',
-        server_debian_password: 'debpass',
-        server_repl_password: 'replpass'
+      qmail: {
+        ldapserver: 'YOUR_SERVER',
+        ldapbasedn: 'YOUR_BASE_DN',
+        ldappassword: 'YOUR_PASSOWRD',
+        ldapgrouppassword: 'YOUR_PASSWORD'
       }
     }
 
