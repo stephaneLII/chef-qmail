@@ -104,6 +104,7 @@ if ! node['qmail']['imapd_enable'] then
   bash 'Courier-stop' do
     user 'root'
     code <<-EOH
+      update-rc.d courier-ldap disable ; update-rc.d courier-authdaemon disable ; update-rc.d courier-imap disable
       service courier-ldap stop ; service courier-authdaemon stop ; service courier-imap stop
     EOH
   end
@@ -114,6 +115,7 @@ if node['qmail']['imapd_enable'] then
   bash 'Courier-start' do
     user 'root'
     code <<-EOH
+      update-rc.d courier-ldap enable ; update-rc.d courier-authdaemon enable ; update-rc.d courier-imap enable 
       service courier-ldap start ; service courier-authdaemon start ; service courier-imap start
     EOH
   end
