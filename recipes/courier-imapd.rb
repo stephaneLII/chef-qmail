@@ -7,8 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-#courier_etc = node['qmail']['courier_etc']
-puts "   \033[31mINSTALLING IMAP\033[0m\n"
+courier_etc = node['qmail']['courier_etc']
+#puts "   \033[31mINSTALLING IMAP\033[0m\n"
 ##################################
 # Paquets necessaires pour debconf
 ##################################
