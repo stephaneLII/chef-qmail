@@ -142,6 +142,7 @@ end
 ##################################
 # Download + Compilation de qmail + qmail-ldap
 ##################################
+config_fast_command = "config-fast #{node['qmail']['me']}"
 
 bash 'download-compilation-qmail-src-ldap' do
   user 'root'
@@ -150,7 +151,7 @@ bash 'download-compilation-qmail-src-ldap' do
   git clone  https://github.com/stephaneLII/qmail-src-ldap.git
   cd qmail-src-ldap
   make setup check
-  ./config-fast test.gov.pf
+  ./#{config_fast_command}
   EOH
 end
 
@@ -171,15 +172,31 @@ end
 # Paramétrage de qmail
 ###############################################
 
-cookbook_file 'defaultdelivery' do
-  path "#{qmail_home}/control/defaultdelivery"
-  action :create
+template "#{qmail_home}/control/defaultdelivery" do
+  source 'defaultdelivery.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'concurrencyincoming' do
-  path "#{qmail_home}/control/concurrencyincoming"
-  action :create
+template "#{qmail_home}/control/concurrencyincoming" do
+  source 'concurrencyincoming.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/control/concurrencyremote" do
+  source 'concurrencyremote.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/control/databytes" do
+  source 'databytes.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
@@ -211,6 +228,34 @@ cookbook_file 'locals' do
   path "#{qmail_home}/control/locals"
   action :create
   mode '0644'
+end
+
+cookbook_file 'smtproutes' do
+  path "#{qmail_home}/control/smtproutes"
+  action :create
+  mode '0644'
+end
+
+template "#{qmail_home}/control/dirmaker" do
+  source 'dirmaker.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+cookbook_file 'create_homedir' do
+  path "/var/qmail/bin/create_homedir"
+  action :create
+  mode '0775'
+  group 'qmail'
+end
+
+bash 'MakeRules' do
+  user 'root'
+  cwd "#{qmail_home}/control"
+  code <<-EOH
+  make
+  EOH
 end
 
 ###############################################
@@ -259,62 +304,39 @@ template "#{qmail_home}/control/ldapgrouppassword" do
   mode '0644'
 end
 
-cookbook_file 'ldapuid' do
-  path "#{qmail_home}/control/ldapuid"
-  action :create
+template "#{qmail_home}/control/ldapuid" do
+  source 'ldapuid.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldapgid' do
-  path "#{qmail_home}/control/ldapgid"
-  action :create
+template "#{qmail_home}/control/ldapgid" do
+  source 'ldapgid.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldaplocaldelivery' do
-  path "#{qmail_home}/control/ldaplocaldelivery"
-  action :create
+template "#{qmail_home}/control/ldaplocaldelivery" do
+  source 'ldaplocaldelivery.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldapobjectclass' do
-  path "#{qmail_home}/control/ldapobjectclass"
-  action :create
+template "#{qmail_home}/control/ldapobjectclass" do
+  source 'ldapobjectclass.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
 end
 
-cookbook_file 'ldaprebind' do
-  path "#{qmail_home}/control/ldaprebind"
-  action :create
+template "#{qmail_home}/control/ldaprebind" do
+  source 'ldaprebind.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
-end
-
-cookbook_file 'dirmaker' do
-  path "#{qmail_home}/control/dirmaker"
-  action :create
-  mode '0644'
-end
-
-cookbook_file 'create_homedir' do
-  path "#{qmail_home}/bin/create_homedir"
-  action :create
-  mode '0775'
-  group 'qmail'
-end
-
-bash 'MakeRules' do
-  user 'root'
-  cwd "#{qmail_home}/control"
-  code <<-EOH
-  make
-  EOH
-end
-
-cookbook_file 'qmail-imap-run' do
-  path "#{qmail_home}/boot/qmail-imapd/run"
-  action :create
-  mode '0755'
-  group 'qmail'
 end
 
 ###############################################
@@ -376,6 +398,11 @@ end
 if node['qmail']['pop3d'] then
   link "#{qmail_service}/qmail-pop3d" do
      to "#{qmail_home}/boot/qmail-pop3d"
+  end
+else
+  link "#{qmail_service}/qmail-pop3d" do
+     to "#{qmail_home}/boot/qmail-pop3d"
+     action :delete
   end
 end
 
