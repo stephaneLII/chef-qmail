@@ -1,7 +1,0 @@
-#!/bin/sh
-
-# Using stdout for logging
-# Using control/defaultdelivery from qmail-local to deliver messages by default
-
-exec env - PATH="<%= @home%>/bin:$PATH" \
-qmail-start "`cat <%= @home%>/control/defaultdelivery`"
