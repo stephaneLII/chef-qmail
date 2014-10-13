@@ -392,7 +392,7 @@ link '/usr/local/bin/tai64nlocal' do
 end
 
 ###############################################
-# Activation du service pop3d si node['qmail']['pop3d']
+# Activation/désactivation du service pop3d si node['qmail']['pop3d']
 ###############################################
 
 if node['qmail']['pop3d'] then
