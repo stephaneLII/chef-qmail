@@ -1,6 +1,8 @@
 # chef-qmail
 
 This cookbook install and configure a mail transport agent based on Qmail with LDAP support.
+It can :
+*installs courier-imapd and enable pop3d, imapd service on the fly.
 
 ## Supported Platforms
 
@@ -100,7 +102,123 @@ This cookbook install and configure a mail transport agent based on Qmail with L
     <td>ldap group password</td>
     <td><tt>password</tt></td>
   </tr>
+  <tr>
+    <td><tt>['qmail']['ldaplocaldelivery']</tt></td>
+    <td>String</td>
+    <td>ldap local delivery</td>
+    <td><tt>0</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['ldapobjectclass']</tt></td>
+    <td>String</td>
+    <td>ldap object Class</td>
+    <td><tt>qmailUser</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['ldaprebind']</tt></td>
+    <td>String</td>
+    <td>ldap rebind</td>
+    <td><tt>1</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['imapd_install']</tt></td>
+    <td>boolean</td>
+    <td>Install courier-imapd</td>
+    <td><tt>false</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['imapd_enable']</tt></td>
+    <td>boolean</td>
+    <td>Enable courier-mapd</td>
+    <td><tt>false</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['pop3d_enable']</tt></td>
+    <td>boolean</td>
+    <td>enable qmail-pop3d</td>
+    <td><tt>false</tt></td>
+  </tr>
+
+  <tr>
+    <td><tt>['qmail']['me']</tt></td>
+    <td>string</td>
+    <td>default for many control files </td>
+    <td><tt>localhost</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['defaultdelivery']</tt></td>
+    <td>string</td>
+    <td>Mail format box</td>
+    <td><tt>./Maildir/</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['concurrencyincoming']</tt></td>
+    <td>integer</td>
+    <td>max simultaneous incoming SMTP connections</td>
+    <td><tt>300</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['concurrencyremote']</tt></td>
+    <td>integer</td>
+    <td>max simultaneous remote deliveries </td>
+    <td><tt>300</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['concurrencylocal']</tt></td>
+    <td>integer</td>
+    <td>max simultaneous local deliveries</td>
+    <td><tt>300</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['databytes']</tt></td>
+    <td>integer</td>
+    <td>max number of bytes in message (0=no limit)</td>
+    <td><tt>10485760</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['locals']</tt></td>
+    <td>Array of strings</td>
+    <td>domains that we deliver locally </td>
+    <td><tt>me</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['rcpthosts']</tt></td>
+    <td>Array of strings</td>
+    <td>domains that we accept mail for</td>
+    <td><tt>me</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['smtproutes']</tt></td>
+    <td>Array of string</td>
+    <td>artificial SMTP routes </td>
+    <td><tt>none</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['pop3drules']</tt></td>
+    <td>Array of string</td>
+    <td>TcpRules for pop3d tcpserver</td>
+    <td><tt>none</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['smtpdrules']</tt></td>
+    <td>Array of string</td>
+    <td>TcpRules for smtpd tcpserver</td>
+    <td><tt>none</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['create_homedir']</tt></td>
+    <td>string</td>
+    <td>script for creating directory</td>
+    <td><tt>create_homedir</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['dirmaker']</tt></td>
+    <td>string</td>
+    <td>Provider script for creating directory</td>
+    <td><tt>#{node['qmail']['qmail_home']}/bin/#{node['qmail']['create_homedir']}</tt></td>
+  </tr>
 </table>
+
 
 ## Usage
 

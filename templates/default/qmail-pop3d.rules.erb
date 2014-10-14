@@ -4,7 +4,6 @@
 # NOPBS, LOGLEVEL and POP3_LOGLEVEL.
 #
 # disable pop-befor-smtp on the loopback
-127.:allow,RELAYCLIENT="",NOPBS=""
-10.:allow,RELAYCLIENT="",NOPBS=""
-172.:allow,RELAYCLIENT="",NOPBS=""
-192.:allow,RELAYCLIENT="",NOPBS=""
+<% @pop3ds.each do |pop3d| %>
+<%= "#{pop3d}" %>
+<% end %>
