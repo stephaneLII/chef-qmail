@@ -20,12 +20,18 @@ default['qmail']['ldaprebind'] = 1
 
 default['qmail']['imapd_install'] = true
 default['qmail']['imapd_enable'] = false
-default['qmail']['pop3d'] = false
+default['qmail']['pop3d_enable'] = false
 
 default['qmail']['me'] = 'localhost'
 default['qmail']['defaultdelivery'] = './Maildir/'
 default['qmail']['concurrencyincoming'] = 300
 default['qmail']['concurrencremote'] = 300
+default['qmail']['concurrentcylocal'] = 300
 default['qmail']['databytes'] = 10485760
 default['qmail']['create_homedir'] = 'create_homedir'
 default['qmail']['dirmaker'] = "#{node['qmail']['qmail_home']}/bin/#{node['qmail']['create_homedir']}"
+default['qmail']['locals'] = ['localhost']
+default['qmail']['rcpthosts'] = ['localhost']
+default['qmail']['smtproutes'] = [':localhost']
+default['qmail']['pop3drules'] = ['']
+default['qmail']['smtpdrules'] = ['']

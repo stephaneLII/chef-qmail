@@ -193,6 +193,22 @@ template "#{qmail_home}/control/concurrencyremote" do
   mode '0644'
 end
 
+template "#{qmail_home}/control/concurrencylocal" do
+  source 'concurrencylocal.erb'
+  owner 'root'
+  group 'root'
+  mode '0644'
+end
+
+template "#{qmail_home}/boot/qmail-smtpd/run" do
+  source 'qmail-smtpd.run.erb'
+  owner 'root'
+  group 'qmail'
+  mode '0755'
+  action :create
+end
+
+
 template "#{qmail_home}/control/databytes" do
   source 'databytes.erb'
   owner 'root'
@@ -200,40 +216,54 @@ template "#{qmail_home}/control/databytes" do
   mode '0644'
 end
 
-cookbook_file 'qmail-smtpd.rules' do
-  path "#{qmail_home}/control/qmail-smtpd.rules"
-  action :create
+template "#{qmail_home}/control/locals" do
+  source 'locals.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
+  variables(
+    :locals => node['qmail']['locals']
+    )
 end
 
-cookbook_file 'qmail-pop3d.rules' do
-  path "#{qmail_home}/control/qmail-pop3d.rules"
-  action :create
+template "#{qmail_home}/control/rcpthosts" do
+  source 'rcpthosts.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
+  variables(
+    :rcpthosts => node['qmail']['rcpthosts']
+    )
 end
 
-cookbook_file 'qmail-imapd.rules' do
-  path "#{qmail_home}/control/qmail-imapd.rules"
-  action :create
+template "#{qmail_home}/control/smtproutes" do
+  source 'smtproutes.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
+  variables(
+    :smtproutes => node['qmail']['smtproutes']
+    )
 end
 
-cookbook_file 'rcpthosts' do
-  path "#{qmail_home}/control/rcpthosts"
-  action :create
+template "#{qmail_home}/control/qmail-pop3d.rules" do
+  source 'qmail-pop3d.rules.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
+  variables(
+    :pop3ds => node['qmail']['pop3drules']
+    )
 end
 
-cookbook_file 'locals' do
-  path "#{qmail_home}/control/locals"
-  action :create
+template "#{qmail_home}/control/qmail-smtpd.rules" do
+  source 'qmail-smtpd.rules.erb'
+  owner 'root'
+  group 'root'
   mode '0644'
-end
-
-cookbook_file 'smtproutes' do
-  path "#{qmail_home}/control/smtproutes"
-  action :create
-  mode '0644'
+  variables(
+    :smtpds => node['qmail']['smtpdrules']
+    )
 end
 
 template "#{qmail_home}/control/dirmaker" do
@@ -392,10 +422,10 @@ link '/usr/local/bin/tai64nlocal' do
 end
 
 ###############################################
-# Activation/désactivation du service pop3d si node['qmail']['pop3d']
+# Activation/désactivation du service pop3d si node['qmail']['pop3d_enable']
 ###############################################
 
-if node['qmail']['pop3d'] then
+if node['qmail']['pop3d_enable'] then
   link "#{qmail_service}/qmail-pop3d" do
      to "#{qmail_home}/boot/qmail-pop3d"
   end
