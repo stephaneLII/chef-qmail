@@ -158,10 +158,16 @@ end
 ##################################
 # Creation du script de controle qmailctl
 ##################################
-cookbook_file 'qmailctl' do
-  path "#{qmail_home}/bin/qmailctl"
-  action :create
+
+template "#{qmail_home}/bin/qmailctl" do
+  source 'qmailctl.erb'
+  owner 'root'
+  group 'qmail'
   mode '0755'
+  variables(
+    :pop3d => node['qmail']['pop3d_enable'],
+    :qmail_home => node['qmail']['qmail_home']
+    )
 end
 
 link '/usr/bin/qmailctl' do
