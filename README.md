@@ -1,6 +1,7 @@
 # chef-qmail
 
 This cookbook install and configure a mail transport agent based on Qmail with LDAP support.
+
 It can :
 *installs courier-imapd and enable pop3d, imapd service on the fly.
 
@@ -53,6 +54,18 @@ It can :
     <td>String</td>
     <td>imap directory</td>
     <td><tt>/etc/courier</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['remove_package_mtas']</tt></td>
+    <td>Array of string</td>
+    <td>MTAs's package to remove</td>
+    <td><tt>['sendmail', 'exim4-base', 'exim4-config', 'exim4-daemon-light' ]</tt></td>
+  </tr>
+  <tr>
+    <td><tt>['qmail']['remove_package_mtas']></td>
+    <td>Array of string</td>
+    <td>MTAs's service to disable</td>
+    <td><tt>['sendmail', 'exim4' ]</tt></td>
   </tr>
   <tr>
     <td><tt>['qmail']['ldapuid']</tt></td>

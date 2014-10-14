@@ -16,6 +16,21 @@ courier_etc = node['qmail']['courier_etc']
 # Paquets necessaires pour QMAIL
 ##################################
 
+node['qmail']['remove_service_mtas'].each do |pkg|
+  service pkg do
+    puts "/etc/init.d/#{pkg}"
+      supports status: true, restart: true, stop: true, reload: true
+      action [:disable, :stop]
+      only_if { ::File.exists?("/etc/init.d/#{pkg}") }
+    end
+end
+
+node['qmail']['remove_package_mtas'].each do |pkg|
+  package pkg do
+    action :purge
+  end
+end
+
 %w( gcc tar csh ucspi-tcp daemontools daemontools-run libldap2-dev libssl-dev git-core ).each do |pkg|
   package pkg do
     action :install
@@ -425,6 +440,10 @@ end
 
 link '/usr/local/bin/tai64nlocal' do
   to '/usr/bin/tai64nlocal'
+end
+
+link '/usr/lib/sendmail' do
+  to '/var/qmail/bin/sendmail'
 end
 
 ###############################################

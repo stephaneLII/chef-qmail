@@ -52,6 +52,10 @@ end
   end
 end
 
+##################################
+# We ensure other MTAs are remove and disabled after installing courier-imap
+##################################
+
 case node['platform']
 when 'ubuntu'
   if node['platform_version'].to_f >= 14.04
@@ -60,6 +64,11 @@ when 'ubuntu'
       action [:disable, :stop]
     end
   end
+when 'debian'
+    service 'exim4' do
+      supports status: true, restart: true, stop: true, reload: true
+      action [:disable, :stop]
+    end
 end
 
 template '/etc/courier/authldaprc' do
