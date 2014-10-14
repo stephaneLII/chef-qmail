@@ -4,7 +4,7 @@
 # chkconfig: - 80 30
 # description: the qmail MTA
 
-PATH=/var/qmail/bin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
+PATH=<%= @qmail_home %>/bin:/bin:/usr/bin:/usr/local/bin:/usr/local/sbin
 export PATH
 
 QMAILDUID=`id -u qmaild`
@@ -23,16 +23,11 @@ case "$1" in
     else
       echo "qmail-smtpd supervise not running"
     fi
-    if svok /etc/service/qmail-pop3d ; then
+    <%= 'if svok /etc/service/qmail-pop3d ; then
       svc -u /etc/service/qmail-pop3d /etc/service/qmail-pop3d/log
     else
       echo "qmail-pop3d supervise not running"
-    fi
-    if svok /etc/service/qmail-imapd ; then
-      svc -u /etc/service/qmail-imapd /etc/service/qmail-imapd/log
-    else
-      echo "qmail-imapd supervise not running"
-    fi
+    fi' if @pop3d %>
     if [ -d /var/lock/subsys ]; then
       touch /var/lock/subsys/qmail
     fi
@@ -41,10 +36,8 @@ case "$1" in
     echo "Stopping qmail..."
     echo "  => qmail-smtpd"
     svc -d /etc/service/qmail-smtpd /etc/service/qmail-smtpd/log
-    echo "  => qmail-pop3d"
-    svc -d /etc/service/qmail-pop3d /etc/service/qmail-pop3d/log
-    echo "  => qmail-imapd"
-    svc -d /etc/service/qmail-imapd /etc/service/qmail-imapd/log
+    <%= 'echo "  => qmail-pop3d"
+    svc -d /etc/service/qmail-pop3d /etc/service/qmail-pop3d/log' if @pop3d %>    
     echo "  => qmail"
     svc -d /etc/service/qmail /etc/service/qmail/log
     if [ -f /var/lock/subsys/qmail ]; then
@@ -56,10 +49,8 @@ case "$1" in
     svstat /etc/service/qmail/log
     svstat /etc/service/qmail-smtpd
     svstat /etc/service/qmail-smtpd/log
-    svstat /etc/service/qmail-pop3d
-    svstat /etc/service/qmail-pop3d/log
-    svstat /etc/service/qmail-imapd
-    svstat /etc/service/qmail-imapd/log
+    <%= 'svstat /etc/service/qmail-pop3d
+    svstat /etc/service/qmail-pop3d/log' if @pop3d %>
     qmail-qstat
     ;;
   doqueue|alrm|flush)
@@ -97,9 +88,9 @@ case "$1" in
     svc -u /etc/service/qmail-smtpd /etc/service/qmail-smtpd/log
     ;;
   cdb)
-    tcprules /etc/tcp.smtp.cdb /etc/tcp.smtp.tmp < /etc/tcp.smtp
-    chmod 644 /etc/tcp.smtp.cdb
-    echo "Reloaded /etc/tcp.smtp."
+    cd <%= @qmail_home %>/control
+    make
+    echo "Reloaded <%= @qmail_home %>/control/Makefile"
     ;;
   help)
     cat <<HELP
