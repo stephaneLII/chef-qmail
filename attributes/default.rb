@@ -5,6 +5,8 @@ default['qmail']['qmail_log'] = '/var/log/qmail'
 default['qmail']['qmail_service'] = '/service'
 default['qmail']['qmail_bals'] = '/data/mail'
 default['qmail']['courier_etc'] = '/etc/courier'
+default['qmail']['remove_package_mtas'] = ['sendmail', 'exim4-base', 'exim4-config', 'exim4-daemon-light' ]
+default['qmail']['remove_service_mtas'] = ['sendmail', 'exim4' ]
 
 default['qmail']['ldapuid'] = '1007'
 default['qmail']['ldapgid'] = '104'
