@@ -418,8 +418,6 @@ case node['platform']
     start_command = 'kill -HUP 1'
 end
 
-
-
 bash 'qmail-restart' do
   user 'root'
   cwd "#{qmail_home}/bin"
