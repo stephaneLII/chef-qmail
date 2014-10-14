@@ -158,11 +158,6 @@ end
 ##################################
 # Creation du script de controle qmailctl
 ##################################
-#cookbook_file 'qmailctl' do
-#  path "#{qmail_home}/bin/qmailctl"
-#  action :create
-#  mode '0755'
-#end
 
 template "#{qmail_home}/bin/qmailctl" do
   source 'qmailctl.erb'
