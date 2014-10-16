@@ -5,8 +5,8 @@ default['qmail']['qmail_log'] = '/var/log/qmail'
 default['qmail']['qmail_service'] = '/service'
 default['qmail']['qmail_bals'] = '/data/mail'
 default['qmail']['courier_etc'] = '/etc/courier'
-default['qmail']['remove_package_mtas'] = ['sendmail', 'exim4-base', 'exim4-config', 'exim4-daemon-light' ]
-default['qmail']['remove_service_mtas'] = ['sendmail', 'exim4' ]
+default['qmail']['remove_package_mtas'] = ['sendmail', 'exim4-base', 'exim4-config', 'exim4-daemon-light', 'postfix' ]
+default['qmail']['remove_service_mtas'] = ['sendmail', 'exim4', 'postfix' ]
 
 default['qmail']['ldapuid'] = '1007'
 default['qmail']['ldapgid'] = '104'
@@ -35,5 +35,5 @@ default['qmail']['dirmaker'] = "#{node['qmail']['qmail_home']}/bin/#{node['qmail
 default['qmail']['locals'] = ['localhost']
 default['qmail']['rcpthosts'] = ['localhost']
 default['qmail']['smtproutes'] = [':localhost']
-default['qmail']['pop3drules'] = ['']
-default['qmail']['smtpdrules'] = ['']
+default['qmail']['pop3drules'] = ['127.:allow,RELAYCLIENT="",NOPBS=""']
+default['qmail']['smtpdrules'] = ['127.:allow,RELAYCLIENT="",NOPBS=""']
