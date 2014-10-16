@@ -56,18 +56,12 @@ end
 # We ensure other MTAs are remove and disabled after installing courier-imap
 ##################################
 
-case node['platform']
-when 'ubuntu'
-  if node['platform_version'].to_f >= 14.04
-    service 'postfix' do
+node['qmail']['remove_service_mtas'].each do |pkg|
+  service pkg do
+    puts "/etc/init.d/#{pkg}"
       supports status: true, restart: true, stop: true, reload: true
       action [:disable, :stop]
-    end
-  end
-when 'debian'
-    service 'exim4' do
-      supports status: true, restart: true, stop: true, reload: true
-      action [:disable, :stop]
+      only_if { ::File.exists?("/etc/init.d/#{pkg}") }
     end
 end
 
