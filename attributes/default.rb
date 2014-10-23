@@ -1,4 +1,3 @@
-
 default['qmail']['src_packager'] = '/usr/local/src'
 default['qmail']['qmail_home'] = '/var/qmail'
 default['qmail']['qmail_log'] = '/var/log/qmail'
