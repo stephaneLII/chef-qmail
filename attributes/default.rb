@@ -36,3 +36,6 @@ default['qmail']['rcpthosts'] = ['localhost']
 default['qmail']['smtproutes'] = [':localhost']
 default['qmail']['pop3drules'] = ['127.:allow,RELAYCLIENT="",NOPBS=""']
 default['qmail']['smtpdrules'] = ['127.:allow,RELAYCLIENT="",NOPBS=""']
+default['qmail']['qmail-mailer-daemon'] = 'root'
+default['qmail']['qmail-postmaster'] = 'root'
+default['qmail']['qmail-root'] = 'root'

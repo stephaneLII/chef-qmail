@@ -294,6 +294,27 @@ template "#{qmail_home}/control/dirmaker" do
   mode '0644'
 end
 
+template "#{qmail_home}/alias/.qmail-root" do
+  source 'qmail-root'
+  owner 'root'
+  group 'qmail'
+  mode '0644'
+end
+
+template "#{qmail_home}/alias/.qmail-postmaster" do
+  source 'qmail-postmaster'
+  owner 'root'
+  group 'qmail'
+  mode '0644'
+end
+
+template "#{qmail_home}/alias/.qmail-mailer-daemon" do
+  source 'dqmail-mailer-daemon'
+  owner 'root'
+  group 'qmail'
+  mode '0644'
+end
+
 cookbook_file 'create_homedir' do
   path "/var/qmail/bin/create_homedir"
   action :create
