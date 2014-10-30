@@ -295,21 +295,21 @@ template "#{qmail_home}/control/dirmaker" do
 end
 
 template "#{qmail_home}/alias/.qmail-root" do
-  source 'qmail-root'
+  source 'qmail-root.erb'
   owner 'root'
   group 'qmail'
   mode '0644'
 end
 
 template "#{qmail_home}/alias/.qmail-postmaster" do
-  source 'qmail-postmaster'
+  source 'qmail-postmaster.erb'
   owner 'root'
   group 'qmail'
   mode '0644'
 end
 
 template "#{qmail_home}/alias/.qmail-mailer-daemon" do
-  source 'dqmail-mailer-daemon'
+  source 'dqmail-mailer-daemon.erb'
   owner 'root'
   group 'qmail'
   mode '0644'
