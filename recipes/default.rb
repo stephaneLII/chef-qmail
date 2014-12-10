@@ -309,7 +309,7 @@ template "#{qmail_home}/alias/.qmail-postmaster" do
 end
 
 template "#{qmail_home}/alias/.qmail-mailer-daemon" do
-  source 'dqmail-mailer-daemon.erb'
+  source 'qmail-mailer-daemon.erb'
   owner 'root'
   group 'qmail'
   mode '0644'
