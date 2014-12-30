@@ -20,6 +20,7 @@ suites:
     #encrypted_data_bag_secret_key_path: 'test/integration/default/encrypted_data_bag_secret'
     run_list:
       - recipe[qmail::default]
+      - recipe[qmail::_check_qmail]
     attributes:
       qmail:
         imapd_enable: true
