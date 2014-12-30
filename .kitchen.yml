@@ -19,8 +19,8 @@ suites:
     data_bags_path: 'test/integration/default/data_bags'
     #encrypted_data_bag_secret_key_path: 'test/integration/default/encrypted_data_bag_secret'
     run_list:
-      - recipe[chef-qmail::default]
+      - recipe[qmail::default]
     attributes:
-      chef-qmail:
+      qmail:
         imapd_enable: true
         pop3d_enable: true

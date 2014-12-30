@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: chef-qmail
+# Cookbook Name:: qmail
 # Recipe:: courier-imapd
 #
 # Copyright (C) 2014 DSI
