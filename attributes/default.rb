@@ -23,7 +23,7 @@ default['qmail']['imapd_install'] = true
 default['qmail']['imapd_enable'] = false
 default['qmail']['pop3d_enable'] = false
 
-default['qmail']['me'] = 'localhost'
+default['qmail']['me'] = node['fqdn']
 default['qmail']['defaultdelivery'] = './Maildir/'
 default['qmail']['concurrencyincoming'] = 300
 default['qmail']['concurrencremote'] = 300
