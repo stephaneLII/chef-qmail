@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: chef-qmail
+# Cookbook Name:: qmail
 # Recipe:: default
 #
 # Copyright (C) 2014 DSI
@@ -38,7 +38,7 @@ end
 end
 
 if node['qmail']['imapd_install'] then
-   include_recipe "chef-qmail::courier-imapd"
+   include_recipe "qmail::courier-imapd"
 end
 
 ##################################
