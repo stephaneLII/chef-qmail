@@ -46,7 +46,7 @@ end
 # Courier-imap Packages
 ###############################
 
-%w( courier-authdaemon courier-authlib courier-authlib-ldap courier-ldap courier-imap ).each do |pkg|
+%w( courier-authdaemon courier-authlib courier-authlib-ldap courier-ldap courier-imap gamin ).each do |pkg|
   package pkg do
     action :install
   end
